@@ -1,0 +1,42 @@
+{{#left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+{{if auth.is_logged_in():}}
+    <h1 class="page-header">Dashboard</h1>
+    <header class="container-fluid background">
+      <div class="jumbotron text-center">
+        {{if response.title:}}
+        <h1>{{=response.title}}
+          <small>{{=response.subtitle or ''}}</small></h1>
+        {{pass}}
+      </div>
+    </header>
+    <h4>This project was developed by <a href="http://abhishekkumar.me" target="_blank">Abhishek Kumar</a>, Jasmeet Singh and Gautam Prem Jain as course project for CSL740 Software Engineering course under Prof. S.C. Gupta. Source code for this webapp is hosted at <a href="http://github.com/abhishek4747/moodle-plus" target="_blank">http://github.com/abhishek4747/moodle-plus</a>.</h4>
+
+    <sub>You might find some bugs or security loop holes in current version. Feel free to drop an email at <a href="mailto:abhishek.iitd16@gmail.com">abhishek.iitd16@gmail.com</a> for any clarification.</sub>
+{{else:}}
+  {{block header}}
+      
+  {{end}}
+
+  <div class="jumbotron">
+  <h1>Moodle Plus</h1>
+  <h2>CSL740 Software Engineering Course Project</h2>
+  <h3>Dr. SC Gupta</h3><br><br>
+
+  <span><strong>Group 13</strong></span><br>
+  <span>Abhishek Kumar (2011CS50272)</span><br>
+  <span>Jasmeet Singh (2011CS50281)</span><br>
+  <span>Gautam Prem Jain (2011CS10217)</span><br><br>
+
+  <p><a class="btn btn-primary btn-lg" href="/user/login" role="button">Login</a>
+  <a class="btn btn-default btn-lg" href="/user/register" role="button">Sign Up</a></p>
+  
+</div>
+<div>
+  
+  <h4>This project was developed by <a href="http://abhishekkumar.me" target="_blank">Abhishek Kumar</a>, Jasmeet Singh and Gautam Prem Jain as course project for CSL740 Software Engineering course under Prof. S.C. Gupta. Source code for this webapp is hosted at <a href="http://github.com/abhishek4747/moodle-plus" target="_blank">http://github.com/abhishek4747/moodle-plus</a>.</h4>
+
+    <sub>You might find some bugs or security loop holes in current version. Feel free to drop an email at <a href="mailto:abhishek.iitd16@gmail.com">abhishek.iitd16@gmail.com</a> for any clarification.</sub>
+</div>
+{{pass}}
