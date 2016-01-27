@@ -147,7 +147,7 @@ db.courses.insert(
 ## create 7 registered courses
 db.registered_courses.insert(	
 	course_id=1,
-	professor=1,
+	professor=5,
 	year_=2016,
 	semester=2,
 	starting_date=datetime(2016,1,1),
@@ -156,7 +156,7 @@ db.registered_courses.insert(
 
 db.registered_courses.insert(
 	course_id=2,
-	professor=1,
+	professor=5,
 	year_=2016,
 	semester=2,
 	starting_date=datetime(2016,1,1),
@@ -165,7 +165,7 @@ db.registered_courses.insert(
 
 db.registered_courses.insert(
 	course_id=3,
-	professor=2,
+	professor=6,
 	year_=2016,
 	semester=2,
 	starting_date=datetime(2016,1,1),
@@ -174,7 +174,7 @@ db.registered_courses.insert(
 
 db.registered_courses.insert(
 	course_id=4,
-	professor=2,
+	professor=6,
 	year_=2016,
 	semester=2,
 	starting_date=datetime(2016,1,1),
@@ -183,7 +183,7 @@ db.registered_courses.insert(
 
 db.registered_courses.insert(
 	course_id=5,
-	professor=3,
+	professor=7,
 	year_=2016,
 	semester=2,
 	starting_date=datetime(2016,1,1),
@@ -192,7 +192,7 @@ db.registered_courses.insert(
 
 db.registered_courses.insert(
 	course_id=6,
-	professor=3,
+	professor=7,
 	year_=2016,
 	semester=2,
 	starting_date=datetime(2016,1,1),
@@ -201,7 +201,7 @@ db.registered_courses.insert(
 
 db.registered_courses.insert(
 	course_id=7,
-	professor=3,
+	professor=7,
 	year_=2016,
 	semester=1,
 	starting_date=datetime(2014,7,1),
