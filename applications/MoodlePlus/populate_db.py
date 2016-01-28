@@ -16,7 +16,7 @@ db.users.insert(
 	username="cs1110200",
 	entry_no="2011CS10200",
 	type_=0,
-	password="1",
+	password="john",
 )
 
 db.users.insert(
@@ -218,7 +218,7 @@ db.student_registrations.insert(student_id=2,registered_course_id=3)
 db.student_registrations.insert(student_id=2,registered_course_id=4)
 db.student_registrations.insert(student_id=2,registered_course_id=6)
 db.student_registrations.insert(student_id=2,registered_course_id=7)
-db.student_registrations.insert(student_id=2,registered_course_id=2)
+db.student_registrations.insert(student_id=2,registered_course_id=1)
 db.student_registrations.insert(student_id=3,registered_course_id=3)
 db.student_registrations.insert(student_id=3,registered_course_id=1)
 db.student_registrations.insert(student_id=3,registered_course_id=5)
@@ -230,9 +230,9 @@ db.student_registrations.insert(student_id=4,registered_course_id=5)
 db.student_registrations.insert(student_id=4,registered_course_id=7)
 db.student_registrations.insert(student_id=4,registered_course_id=1)
 
-## create 3 assignments in Software engineering course
+## create 3 assignments in Design Practices course
 db.events.insert(
-	registered_course_id=3,
+	registered_course_id=1,
 	type_=0,
 	name="Project Submission 1: Draft Requirement Document",
 	description="<p><br></p><p>Organise 2 hr meeting of the team to</p><p>-Choose one of the Projects discussed in the class</p><p>-Discuss the specification of the selected project. Identify the aspects to be explored by team members&nbsp;</p><p>-Document the discussion and the initial specs of the project</p><p><br></p><p>Organise 2nd 2 hr meeting &nbsp;to</p><p>-Share the homework done by each team member</p><p>-Discuss and finalise the specs of the projects</p><p>-Prepare 1 or 2 page document on the draft project specification&nbsp;</p><p><br></p><p>Submit the draft Project Requirement Document by Wednesday mid night.</p><p>Add title of the project in the group excel sheet</p>",
@@ -262,9 +262,21 @@ db.events.insert(
 )
 
 ## Grades
-db.grades.insert(user_id=1, registered_course_id=3, name="Assignment 1", score=15, out_of=15, weightage=10)
-db.grades.insert(user_id=1, registered_course_id=3, name="Assignment 2", score=18, out_of=20, weightage=15)
-db.grades.insert(user_id=1, registered_course_id=3, name="Minor 1", score=25, out_of=30, weightage=25)
+db.grades.insert(user_id=1, registered_course_id=1, name="Assignment 1", score=15, out_of=15, weightage=10)
+db.grades.insert(user_id=1, registered_course_id=1, name="Assignment 2", score=10, out_of=20, weightage=15)
+db.grades.insert(user_id=1, registered_course_id=1, name="Minor 1", score=25, out_of=30, weightage=25)
+
+db.grades.insert(user_id=2, registered_course_id=1, name="Assignment 1", score=15, out_of=15, weightage=10)
+db.grades.insert(user_id=2, registered_course_id=1, name="Assignment 2", score=18, out_of=20, weightage=15)
+db.grades.insert(user_id=2, registered_course_id=1, name="Minor 1", score=20, out_of=30, weightage=25)
+
+db.grades.insert(user_id=3, registered_course_id=1, name="Assignment 1", score=15, out_of=15, weightage=10)
+db.grades.insert(user_id=3, registered_course_id=1, name="Assignment 2", score=14, out_of=20, weightage=15)
+db.grades.insert(user_id=3, registered_course_id=1, name="Minor 1", score=23, out_of=30, weightage=25)
+
+db.grades.insert(user_id=4, registered_course_id=1, name="Assignment 1", score=15, out_of=15, weightage=10)
+db.grades.insert(user_id=4, registered_course_id=1, name="Assignment 2", score=20, out_of=20, weightage=15)
+db.grades.insert(user_id=4, registered_course_id=1, name="Minor 1", score=15, out_of=30, weightage=25)
 
 ## create 4 threads in Different courses
 
