@@ -14,8 +14,59 @@ def test():
 
 
 def notification():
-    notii = db(db.notification.id_user=="vinay").select(orderby=~db.notification.id)
+    notii = db(db.notification.id_user == auth.user.id ).select(orderby=~db.notification.id)
     return dict(notifi=notii)
+
+@auth.requires_login()
+def complaint():
+	try:
+		cid = int(request.args[0])
+	except Exception, e:
+		raise e
+	try:
+		tab = str(request.args[1])
+	except Exception, e:
+		tab = "problem"
+	try:
+		vote = int(request.args[2])
+	except Exception, e:
+		vote = 0
+	success = "False"
+	row = db(db.complaints.id==cid).select().first()
+	if 1==1:
+		complaint = db(db.complaints.id==cid).select().first()
+        comments = get_comments(cid)
+        if(len(request.args)==1):success = "True" 
+	if (len(request.args)==2) & (tab == "resolve"):
+		row.update_record(is_resolved = 1) if row.is_resolved==0 else row.update_record(is_resolved = 0)
+		success = "True"
+	if (len(request.args)==3) & (tab == "vote"):     ##check if already upvoted
+		row.update_record(upvotes = vote+row.upvotes)
+		success = "True"
+	if success == "True":
+		return dict(success = success, complaint=complaint,comments=comments)
+	else:
+		raise HTTP(404)
+
+
+
+def get_comments(cid):
+    comments =  db(db.comments_.id_complaint == cid).select()
+    return comments
+
+"""
+def comments():
+	try:
+		tid = int(request.vars["thread_id"])
+	except Exception, e:
+		raise e
+	comments, comment_users, times_readable = get_comments(tid)
+	return dict(comments=comments, comment_users=comment_users, times_readable=times_readable )
+"""
+
+
+
+
 
 
 def index():
@@ -272,6 +323,18 @@ def populate_db():
         addressed_to = 2,
         resolving_person = "I"
 	)
+
+	db.comments_.insert(
+        description ="sounds right",
+        created_by = 4,
+        id_complaint = 1
+	)
+	db.comments_.insert(
+        description ="please, consider it at the time of grading",
+        created_by = 7,
+        id_complaint = 1
+	)
+
 	db.notification.insert(
 		id_user = 1,
         id_complaint = 1,

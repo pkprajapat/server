@@ -25,7 +25,7 @@ def course():
 		year = int(request.args[2])
 	except Exception, e:
 		year = get_current_year()
-
+	
 	try:
 		sem = str(request.args[3])
 		sem = sems.index(sem)

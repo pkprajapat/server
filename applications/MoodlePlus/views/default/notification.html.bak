@@ -1,3 +1,6 @@
 {{extend 'layout.html'}}
 <h1>This is the default/notification.html template</h1>
+
+{{=notifi  }}
+
 {{=BEAUTIFY(response._vars)}}
