@@ -124,6 +124,37 @@ db.define_table(
     Field('registration_id', length=512, writable=False, readable=False, default=''),
  )
 
+db.define_table(
+    'hostels',
+    Field('hostel_name', db.hostel_names),
+    Field('user_', db.users)
+)
+db.define_table(
+    'complaints',
+    Field('title', length = 1024),
+    Field('description'),
+    Field('user_', db.users),
+    Field('c_type', db.complaint_type),
+    Field('addressed_to', db.profession),
+    Field('resolving_person'),
+    Field('created_at', ),
+    Field('upvotes'),
+    Field('is_resolved'),
+)
+db.define_table(
+    Field('description'),
+    Field('id_complaint',db.complaints),
+    Field('created_by', db.users),
+    Field('created_at')
+)
+db.define_table(
+    Field('id_user', db.users),
+    Field('id_complaint', db.complaints),
+    Field('id_type',),
+    Field('is_seen'),
+    Field('is_seen_new'),
+    Field('vote')
+)
 
 custom_auth_table = db['users']
 

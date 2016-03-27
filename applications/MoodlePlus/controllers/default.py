@@ -7,6 +7,12 @@
 ## - user is required for authentication and authorization
 ## - download is for downloading files uploaded in the db (does streaming)
 #########################################################################
+def test():
+    noti = db(db.users.hostel==db.hostel_names.id).select(orderby=~db.hostel_names.id)
+    return dict(show=noti)
+
+
+
 
 def index():
     """

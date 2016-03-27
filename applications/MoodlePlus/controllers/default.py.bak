@@ -7,6 +7,12 @@
 ## - user is required for authentication and authorization
 ## - download is for downloading files uploaded in the db (does streaming)
 #########################################################################
+def test():
+    noti = db(db.users.id==db.hostel_names.id).select(orderby=~db.hostel_names.id)
+    return dict(show=noti)
+
+
+
 
 def index():
     """
@@ -136,11 +142,11 @@ def populate_db():
 	db.profession.insert(
 		profession = "Student"
 	)
-	db.complaint_type.insert(
-		type_name = "Professor"
+	db.profession.insert(
+		profession = "Professor"
 	)
-	db.complaint_type.insert(
-		type_name = "Warden"
+	db.profession.insert(
+		profession = "Warden"
 	)
 
 	## create 4 students
