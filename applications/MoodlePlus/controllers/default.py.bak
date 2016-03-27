@@ -136,11 +136,11 @@ def populate_db():
 	db.profession.insert(
 		profession = "Student"
 	)
-	db.profession.insert(
-		profession = "Professor"
+	db.complaint_type.insert(
+		type_name = "Professor"
 	)
-	db.profession.insert(
-		profession = "Warden"
+	db.complaint_type.insert(
+		type_name = "Warden"
 	)
 
 	## create 4 students

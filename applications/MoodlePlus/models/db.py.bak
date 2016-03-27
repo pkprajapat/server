@@ -100,16 +100,6 @@ db.define_table(
 )
 
 db.define_table(
-    'complaint_type',
-    Field('type_name', length = 128, unique = True)
-)
-
-db.define_table(
-    'profession',
-    Field('profession', length = 128, unique = True)
-)
-
-db.define_table(
     'users',
     Field('first_name', length=128, default=''),
     Field('last_name', length=128, default=''),
