@@ -1,5 +1,5 @@
 {{extend 'layout.html'}}
 <h1>This is the default/test.html template</h1>
-{{=notifications  }}
+{{=show  }}
 
 {{=BEAUTIFY(response._vars)}}

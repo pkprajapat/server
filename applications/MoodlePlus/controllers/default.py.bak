@@ -8,10 +8,14 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 #########################################################################
 def test():
-    noti = db(db.users.id==db.hostel_names.id).select(orderby=~db.hostel_names.id)
+    noti = db(db.users.hostel==db.hostel_names.id).select(orderby=~db.hostel_names.id)
     return dict(show=noti)
 
 
+
+def notification():
+    notii = db(db.notification.id_user==1).select(orderby=~db.notification.id)
+    return dict(notifi=notii)
 
 
 def index():
@@ -229,6 +233,62 @@ def populate_db():
 		type_=1,
 		password="subodh",
 	)
+    ##linking hostels and users
+	db.hostels.insert(
+		hostel_name = 1,
+        user_ = 1
+	)
+	db.hostels.insert(
+		hostel_name = 2,
+        user_ = 2
+	)
+	db.hostels.insert(
+		hostel_name = 2,
+        user_ = 3
+	)
+	db.hostels.insert(
+		hostel_name = 1,
+        user_ = 4
+	)
+	db.hostels.insert(
+		hostel_name = 3,
+        user_ = 5
+	)
+	db.hostels.insert(
+		hostel_name = 2,
+        user_ = 6
+	)
+	db.hostels.insert(
+		hostel_name = 1,
+        user_ = 7
+	)
+
+    ##create a sample complaint
+	db.complaints.insert(
+		title = "too much work in cop290",
+        description ="At any time, there is a cop290 assignment to submit.Either make the work load less or conduct actual help sessions",
+        user_ = 1,
+        id_type = 2,
+        addressed_to = 2,
+        resolving_person = "I"
+	)
+	db.notification.insert(
+		id_user = 1,
+        id_complaint = 1,
+        id_type = 2,
+        is_seen = 1
+	)
+	db.notification.insert(
+		id_user = 4,
+        id_complaint = 1,
+        id_type = 2
+	)
+	db.notification.insert(
+		id_user = 7,
+        id_complaint = 1,
+        id_type = 2
+	)
+
 
 
 	## create 7 courses

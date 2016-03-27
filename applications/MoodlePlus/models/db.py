@@ -132,28 +132,30 @@ db.define_table(
 db.define_table(
     'complaints',
     Field('title', length = 1024),
-    Field('description'),
+    Field('description','string'),
     Field('user_', db.users),
-    Field('c_type', db.complaint_type),
+    Field('id_type', db.complaint_type),
     Field('addressed_to', db.profession),
     Field('resolving_person'),
-    Field('created_at', ),
-    Field('upvotes'),
-    Field('is_resolved'),
+    Field('created_at', 'datetime', default=datetime.now),
+    Field('upvotes','integer',default=0),
+    Field('is_resolved','integer',default=0),
 )
 db.define_table(
-    Field('description'),
+    'comments_',
+    Field('description','string'),
     Field('id_complaint',db.complaints),
     Field('created_by', db.users),
-    Field('created_at')
+    Field('created_at', 'datetime', default=datetime.now)
 )
 db.define_table(
+    'notification',
     Field('id_user', db.users),
     Field('id_complaint', db.complaints),
-    Field('id_type',),
-    Field('is_seen'),
-    Field('is_seen_new'),
-    Field('vote')
+    Field('id_type',db.complaint_type),
+    Field('is_seen','integer',default=0),
+    Field('is_seen_new','integer',default=0),
+    Field('vote','integer',default=0)
 )
 
 custom_auth_table = db['users']
