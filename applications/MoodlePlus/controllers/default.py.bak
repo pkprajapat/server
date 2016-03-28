@@ -12,10 +12,24 @@ def test():
     return dict(show=noti)
 
 
+def complaint_new():
+    def POST(owner,name,info):
+        return db.dog.validate_and_insert(owner=owner,name=name,info=info)
 
+
+@auth.requires_login()
 def notification():
     notii = db(db.notification.id_user == auth.user.id ).select(orderby=~db.notification.id)
-    return dict(notifi=notii)
+    users = []
+    complaints = []
+    comp_type = []
+    for noti in notii:
+        complaints.append(db(db.complaints.id == noti.id_complaint).select())
+        comp_type.append(db(db.complaint_type.id == noti.id_type).select())
+        ##users.append(db(db.users.id == noti.id_complaint).select())
+    ##for comp in complaints:
+      ##  users.append(db(db.users.id == comp. .user_).select())
+    return dict(notifi=notii,users=users,complaints=complaints,comp_type=comp_type)
 
 @auth.requires_login()
 def complaint():
@@ -37,6 +51,10 @@ def complaint():
 		complaint = db(db.complaints.id==cid).select().first()
         comments = get_comments(cid)
         if(len(request.args)==1):success = "True" 
+        users = []
+        users.append(db(db.users.id == complaint.user_).select())
+        for comm in comments:
+			users.append(db(db.users.id == comm.created_by).select())
 	if (len(request.args)==2) & (tab == "resolve"):
 		row.update_record(is_resolved = 1) if row.is_resolved==0 else row.update_record(is_resolved = 0)
 		success = "True"
@@ -44,8 +62,8 @@ def complaint():
 		row.update_record(upvotes = vote+row.upvotes)
 		success = "True"
 	if success == "True":
-		return dict(success = success, complaint=complaint,comments=comments)
-	else:
+		return dict(success = success, complaint=complaint,comments=comments,users=users)
+	else :
 		raise HTTP(404)
 
 
