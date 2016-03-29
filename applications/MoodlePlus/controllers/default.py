@@ -1,12 +1,4 @@
-# -*- coding: utf-8 -*-
-# this file is released under public domain and you can use without limitations
-
-#########################################################################
-## This is a sample controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-#########################################################################
+##this is just a test api
 def test():
     noti = db(db.users.hostel==db.hostel_names.id).select(orderby=~db.hostel_names.id)
     return dict(show=noti)
@@ -16,41 +8,42 @@ def test():
     user = auth.login_bare(userid,password)
     return dict(success=False if not user else True, user=user)
 """
+##takes values from url and creates new comment in database
 @auth.requires_login()
 def comment_new():
     if auth.is_logged_in() and ("description" in request.vars) and ("id_comp" in request.vars):
-        description = str(request.vars["description"]).strip()
+        description = str(request.vars["description"]).strip()             ##take desc from url
         id_comp = str(request.vars["id_comp"])
         if description!='':
-            cid = db.comments_.insert(created_by=auth.user.id, id_complaint=id_comp, description=description)
+            cid = db.comments_.insert(created_by=auth.user.id, id_complaint=id_comp, description=description)      ##create new comment
         notii = db(db.notification.id_complaint == id_comp).select()
         for noti in notii:
             row = db(db.notifications.id==noti.id).select().first()
-            row.update_record(is_seen_new = "False")
+            row.update_record(is_seen_new = "False") if row else 1==1             ## change seen_new  status
         return dict(success="True")
     return dict(success="False")
 
+##takes values from url and insert new complaint in db
 @auth.requires_login()
 def new_complaint():
     if auth.is_logged_in() and ("title" in request.vars) and ("description" in request.vars) and ("id_type" in request.vars):
-        description = str(request.vars["description"]).strip()
+        description = str(request.vars["description"]).strip()       ##take values from url
         title = str(request.vars["title"])
         id_user = auth.user.id
         id_type = int(request.vars["id_type"])
         ##curr = db(db.users.id == id_user).select().first().hostel
         ##aid = db(db.users.hostel == curr)(db.users.type_ == 1).select().first()
         try:
-            addressed_to = str(request.vars["addressed_to"])
+            addressed_to = int(request.vars["addressed_to"])
         except:
-            addressed_to = ""
+            addressed_to = 1
         if description!='' and title!='' and id_type!='' :
-            cid = db.complaints.validate_and_insert(user_=auth.user.id, id_type=id_type,title=title, description=description,addressed_to=addressed_to,resolving_person="me")
-        if id_type ==3:
+            cid = db.complaints.validate_and_insert(user_=auth.user.id, id_type=id_type,title=title, description=description,addressed_to=addressed_to,resolving_person=str(auth.user.id))     ##create new entry in complaints takes and validate
+        if id_type ==3:       ##if institute level comp create noti for all users
             users = db(db.users.id >0).select().first()
             for us in users:
                 nid = db.notification.insert(id_user=us.id,id_complaint=cid,id_type=id_type)
-        if id_type == 2:
-            ##db(db.complaints.id==cid.id).update(addressed_to= 1)
+        if id_type == 2:   ## if hostel level comp create noti for same hostel users
             cur = db(db.users.id == auth.user.id).select().first()
             users = db(db.users.hostel == cur.hostel).select()
             for us in users:
@@ -58,27 +51,31 @@ def new_complaint():
         return dict(success="True",complaint=cid)
     return dict(success="False")
 
-
+##new complaint with post method
 def complaint_new():
     def POST(title,description,id_type,addressed_to):
         user_ = auth.user.id
         return  db.complaints.validate_and_insert(title=title,description=description,user_=user_,id_type=id_type,addressed_to=addressed_to,resolving_person ="me")
 
+## send all notification data
 @auth.requires_login()
 def notification():
-    notii = db(db.notification.id_user == auth.user.id ).select(orderby=~db.notification.id)
+    ##if db(db.notification.id_user == auth.user.id ).select().first().complaint_id
+    notii = db(db.notification.id_user == auth.user.id ).select(orderby=~db.notification.id)     ## all noti of current user
     users = []
     complaints = []
     comp_type = []
     cc =[]
     users.append(db(db.users.id == auth.user.id).select().first())
     for noti in notii:
-        complaints.append(db(db.complaints.id == noti.id_complaint).select().first())
-        comp_type.append(db(db.complaint_type.id == noti.id_type).select().first())
+        if (db(db.complaints.id == noti.id_complaint).select().first()):
+            complaints.append(db(db.complaints.id == noti.id_complaint).select().first())    ##comp of respective noti
+            comp_type.append(db(db.complaint_type.id == noti.id_type).select().first())
     for comp in complaints:
         users.append(db(db.users.id == comp.user_).select().first()) if comp else 1==1
     return dict(notifi=notii,users=users,complaints=complaints,comp_type=comp_type)
 
+##send details of a requested complaint or update vote/resolve status
 @auth.requires_login()
 def complaint():
 	try:
@@ -96,31 +93,25 @@ def complaint():
 	success = "False"
 	row = db(db.complaints.id==cid).select().first()
 	if 1==1:
-		complaint = db(db.complaints.id==cid).select().first()
-        comments = get_comments(cid)
-        if(len(request.args)==1):success = "True" 
+		complaint = db(db.complaints.id==cid).select().first()     ## get comp data
+        comments = db(db.comments_.id_complaint == cid).select()   ## get comments data
+        if(len(request.args)==1):success = "True"
         users = []
-        users.append(db(db.users.id == complaint.user_).select().first())
+        users.append(db(db.users.id == complaint.user_).select().first())   ## get corresponding user data
         for comm in comments:
 			users.append(db(db.users.id == comm.created_by).select().first())
-	if (len(request.args)==2) & (tab == "resolve") :
+	if (len(request.args)==2) & (tab == "resolve") :              ## if true change resolve status
 		row.update_record(is_resolved = 1) if row.is_resolved==0 else row.update_record(is_resolved = 0)
 		success = "True"
-	if (len(request.args)==3) & (tab == "vote"):     ##check if already upvoted
+	if (len(request.args)==3) & (tab == "vote"):     ##if true update vote status
 		row.update_record(upvotes = vote+row.upvotes)
 		success = "True"
-	db(db.notification.id_user==auth.user.id)(db.notification.id_complaint == cid).update(is_seen=1)
+	db(db.notification.id_user==auth.user.id)(db.notification.id_complaint == cid).update(is_seen=1)      ##update seen status
 	db(db.notification.id_user==auth.user.id)(db.notification.id_complaint == cid).update(is_seen_new=1)
 	if success == "True":
 		return dict(success = success, complaint=complaint,comments=comments,users=users)
 	else :
 		raise HTTP(404)
-
-
-
-def get_comments(cid):
-    comments =  db(db.comments_.id_complaint == cid).select()
-    return comments
 
 
 
