@@ -131,7 +131,7 @@ db.define_table(
 )
 db.define_table(
     'complaints',
-    Field('title', length = 1024),
+    Field('title', length = 1024,unique=True),
     Field('description','string'),
     Field('user_', db.users),
     Field('id_type', db.complaint_type),

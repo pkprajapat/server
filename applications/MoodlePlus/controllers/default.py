@@ -16,6 +16,7 @@ def test():
     user = auth.login_bare(userid,password)
     return dict(success=False if not user else True, user=user)
 """
+@auth.requires_login()
 def comment_new():
     if auth.is_logged_in() and ("description" in request.vars) and ("id_comp" in request.vars):
         description = str(request.vars["description"]).strip()
@@ -29,24 +30,31 @@ def comment_new():
         return dict(success="True")
     return dict(success="False")
 
+@auth.requires_login()
 def new_complaint():
     if auth.is_logged_in() and ("title" in request.vars) and ("description" in request.vars) and ("id_type" in request.vars):
         description = str(request.vars["description"]).strip()
         title = str(request.vars["title"])
         id_user = auth.user.id
-        id_type = str(request.vars["id_type"])
-        addressed_to = str(request.vars["addressed_to"])
-        if description!='' and title!='' and id_type!='' and addressed_to!='':
-            cid = db.complaints.insert(user_=auth.user.id, id_type=id_type,title=title, description=description,addressed_to=addressed_to,resolving_person="me")
-        if id_type ==2:
+        id_type = int(request.vars["id_type"])
+        ##curr = db(db.users.id == id_user).select().first().hostel
+        ##aid = db(db.users.hostel == curr)(db.users.type_ == 1).select().first()
+        try:
+            addressed_to = str(request.vars["addressed_to"])
+        except:
+            addressed_to = ""
+        if description!='' and title!='' and id_type!='' :
+            cid = db.complaints.validate_and_insert(user_=auth.user.id, id_type=id_type,title=title, description=description,addressed_to=addressed_to,resolving_person="me")
+        if id_type ==3:
             users = db(db.users.id >0).select().first()
             for us in users:
                 nid = db.notification.insert(id_user=us.id,id_complaint=cid,id_type=id_type)
-        if id_type == 1:
+        if id_type == 2:
+            ##db(db.complaints.id==cid.id).update(addressed_to= 1)
             cur = db(db.users.id == auth.user.id).select().first()
-            users = db(db.user.hostel == cur.hostel).select()
+            users = db(db.users.hostel == cur.hostel).select()
             for us in users:
-                nid = db.notification.insert(id_user=us.id,id_complaint=cid,id_type=id_type)
+                nid = db.notification.insert(id_user=us.id,id_complaint=cid.id,id_type=id_type)
         return dict(success="True",complaint=cid)
     return dict(success="False")
 
@@ -62,12 +70,13 @@ def notification():
     users = []
     complaints = []
     comp_type = []
+    cc =[]
     users.append(db(db.users.id == auth.user.id).select().first())
     for noti in notii:
         complaints.append(db(db.complaints.id == noti.id_complaint).select().first())
         comp_type.append(db(db.complaint_type.id == noti.id_type).select().first())
     for comp in complaints:
-        users.append(db(db.users.id == comp.user_).select().first())
+        users.append(db(db.users.id == comp.user_).select().first()) if comp else 1==1
     return dict(notifi=notii,users=users,complaints=complaints,comp_type=comp_type)
 
 @auth.requires_login()
