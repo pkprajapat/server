@@ -11,11 +11,50 @@ def test():
     noti = db(db.users.hostel==db.hostel_names.id).select(orderby=~db.hostel_names.id)
     return dict(show=noti)
 
+""" userid = request.vars.userid
+    password = request.vars.password
+    user = auth.login_bare(userid,password)
+    return dict(success=False if not user else True, user=user)
+"""
+def comment_new():
+    if auth.is_logged_in() and ("description" in request.vars) and ("id_comp" in request.vars):
+        description = str(request.vars["description"]).strip()
+        id_comp = str(request.vars["id_comp"])
+        if description!='':
+            cid = db.comments_.insert(created_by=auth.user.id, id_complaint=id_comp, description=description)
+        notii = db(db.notification.id_complaint == id_comp).select()
+        for noti in notii:
+            row = db(db.notifications.id==noti.id).select().first()
+            row.update_record(is_seen_new = "False")
+        return dict(success="True")
+    return dict(success="False")
+
+def new_complaint():
+    if auth.is_logged_in() and ("title" in request.vars) and ("description" in request.vars) and ("id_type" in request.vars):
+        description = str(request.vars["description"]).strip()
+        title = str(request.vars["title"])
+        id_user = auth.user.id
+        id_type = str(request.vars["id_type"])
+        addressed_to = str(request.vars["addressed_to"])
+        if description!='' and title!='' and id_type!='' and addressed_to!='':
+            cid = db.complaints.insert(user_=auth.user.id, id_type=id_type,title=title, description=description,addressed_to=addressed_to,resolving_person="me")
+        if id_type ==2:
+            users = db(db.users.id >0).select().first()
+            for us in users:
+                nid = db.notification.insert(id_user=us.id,id_complaint=cid,id_type=id_type)
+        if id_type == 1:
+            cur = db(db.users.id == auth.user.id).select().first()
+            users = db(db.user.hostel == cur.hostel).select()
+            for us in users:
+                nid = db.notification.insert(id_user=us.id,id_complaint=cid,id_type=id_type)
+        return dict(success="True",complaint=cid)
+    return dict(success="False")
+
 
 def complaint_new():
-    def POST(owner,name,info):
-        return db.dog.validate_and_insert(owner=owner,name=name,info=info)
-
+    def POST(title,description,id_type,addressed_to):
+        user_ = auth.user.id
+        return  db.complaints.validate_and_insert(title=title,description=description,user_=user_,id_type=id_type,addressed_to=addressed_to,resolving_person ="me")
 
 @auth.requires_login()
 def notification():
@@ -23,12 +62,12 @@ def notification():
     users = []
     complaints = []
     comp_type = []
+    users.append(db(db.users.id == auth.user.id).select().first())
     for noti in notii:
-        complaints.append(db(db.complaints.id == noti.id_complaint).select())
-        comp_type.append(db(db.complaint_type.id == noti.id_type).select())
-        ##users.append(db(db.users.id == noti.id_complaint).select())
-    ##for comp in complaints:
-      ##  users.append(db(db.users.id == comp. .user_).select())
+        complaints.append(db(db.complaints.id == noti.id_complaint).select().first())
+        comp_type.append(db(db.complaint_type.id == noti.id_type).select().first())
+    for comp in complaints:
+        users.append(db(db.users.id == comp.user_).select().first())
     return dict(notifi=notii,users=users,complaints=complaints,comp_type=comp_type)
 
 @auth.requires_login()
@@ -52,15 +91,17 @@ def complaint():
         comments = get_comments(cid)
         if(len(request.args)==1):success = "True" 
         users = []
-        users.append(db(db.users.id == complaint.user_).select())
+        users.append(db(db.users.id == complaint.user_).select().first())
         for comm in comments:
-			users.append(db(db.users.id == comm.created_by).select())
-	if (len(request.args)==2) & (tab == "resolve"):
+			users.append(db(db.users.id == comm.created_by).select().first())
+	if (len(request.args)==2) & (tab == "resolve") :
 		row.update_record(is_resolved = 1) if row.is_resolved==0 else row.update_record(is_resolved = 0)
 		success = "True"
 	if (len(request.args)==3) & (tab == "vote"):     ##check if already upvoted
 		row.update_record(upvotes = vote+row.upvotes)
 		success = "True"
+	db(db.notification.id_user==auth.user.id)(db.notification.id_complaint == cid).update(is_seen=1)
+	db(db.notification.id_user==auth.user.id)(db.notification.id_complaint == cid).update(is_seen_new=1)
 	if success == "True":
 		return dict(success = success, complaint=complaint,comments=comments,users=users)
 	else :
@@ -71,19 +112,6 @@ def complaint():
 def get_comments(cid):
     comments =  db(db.comments_.id_complaint == cid).select()
     return comments
-
-"""
-def comments():
-	try:
-		tid = int(request.vars["thread_id"])
-	except Exception, e:
-		raise e
-	comments, comment_users, times_readable = get_comments(tid)
-	return dict(comments=comments, comment_users=comment_users, times_readable=times_readable )
-"""
-
-
-
 
 
 
